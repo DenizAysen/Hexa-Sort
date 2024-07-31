@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public class HexStack : MonoBehaviour
 {
    public List<Hexagon> Hexagons {  get; private set; }
@@ -13,16 +12,22 @@ public class HexStack : MonoBehaviour
             Hexagons = new List<Hexagon>();
 
         Hexagons.Add(hexagonInstance);
+        hexagonInstance.SetParent(transform);
     }
-
-    void Start()
+    public void Place()
     {
-        
+        foreach (Hexagon hexagon in Hexagons)
+        {
+            hexagon.DisableCollider();
+        }
     }
-
-    // Update is called once per frame
-    void Update()
+    public Color GetTopHexagonColor() => Hexagons[^1].Color;
+    public bool Contains(Hexagon hexagon) => Hexagons.Contains(hexagon);
+    public void Remove(Hexagon hexagon)
     {
-        
+        Hexagons.Remove(hexagon);
+
+        if (Hexagons.Count <= 0)
+            DestroyImmediate(gameObject);
     }
 }
