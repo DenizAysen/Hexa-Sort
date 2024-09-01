@@ -4,8 +4,14 @@ using System.Collections.Generic;
 using UnityEngine;
 public class HexStack : MonoBehaviour
 {
-   public List<Hexagon> Hexagons {  get; private set; }
+    public List<Hexagon> Hexagons {  get; private set; }
+    public void Initiliaze()
+    {
+        for (int i = 0; i < transform.childCount; i++)
+            Add(transform.GetChild(i).GetComponent<Hexagon>());
 
+        Place();
+    }
     public void Add(Hexagon hexagonInstance)
     {
         if (Hexagons == null) 

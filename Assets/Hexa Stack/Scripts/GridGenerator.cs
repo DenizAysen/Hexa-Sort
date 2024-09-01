@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using NaughtyAttributes;
 
+#if UNITY_EDITOR
+using UnityEditor;
 public class GridGenerator : MonoBehaviour
 {
     [SerializeField] private Grid grid;
@@ -21,8 +23,13 @@ public class GridGenerator : MonoBehaviour
                 if (spawnPos.magnitude > grid.CellToWorld(new Vector3Int(1, 0, 0)).magnitude * gridSize)
                     continue;
 
-                Instantiate(hexagon, spawnPos, Quaternion.identity,transform) ;
+                GameObject gridHexInstance = (GameObject) PrefabUtility.InstantiatePrefab(hexagon);
+                gridHexInstance.transform.position = spawnPos;
+                gridHexInstance.transform.rotation = Quaternion.identity;
+                gridHexInstance.transform.SetParent(transform);
+                //Instantiate(hexagon, spawnPos, Quaternion.identity,transform) ;
             }
         }
     }
 }
+#endif

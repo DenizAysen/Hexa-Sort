@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class MergeManager : MonoBehaviour
 {
+    private List<GridCell> updatedGridCells = new List<GridCell>();
+    public static Action<int> onStackCompleted;
     private void OnEnable()
     {
         SubscribeEvents();
@@ -29,10 +31,18 @@ public class MergeManager : MonoBehaviour
     }
     private IEnumerator StackPlacedRoutine(GridCell gridCell)
     {
-        yield return CheckForMerge(gridCell);
+        updatedGridCells.Add(gridCell);
+
+        while (updatedGridCells.Count > 0)
+            yield return CheckForMerge(updatedGridCells[0]);
     }
     private IEnumerator CheckForMerge(GridCell gridCell)
     {
+        updatedGridCells.Remove(gridCell);
+
+        if(!gridCell.IsOccupied)
+            yield break;
+
         List<GridCell> neighborGridCells = GetNeighborGridCells(gridCell);
 
         if (neighborGridCells.Count <= 0)
@@ -49,6 +59,8 @@ public class MergeManager : MonoBehaviour
         {
             yield break;
         }
+
+        updatedGridCells.AddRange(similarNeighborGridCells);
 
         List<Hexagon> hexagonsToAdd = GetHexagonsToAdd(gridCellTopHexagonColor, similarNeighborGridCells.ToArray());
 
@@ -154,6 +166,8 @@ public class MergeManager : MonoBehaviour
         if (gridCell.Stack.Hexagons.Count < 10)
             yield break;
 
+        int collectedHexagons = gridCell.Stack.Hexagons.Count;
+
         Hexagon hex;
         List<Hexagon> similarHexagons = new List<Hexagon>();
         for (int i = gridCell.Stack.Hexagons.Count -1; i >= 0; i--)
@@ -178,10 +192,12 @@ public class MergeManager : MonoBehaviour
             gridCell.Stack.Remove(similarHexagons[0]);
             similarHexagons[0].Vanish(delay);
             delay += .01f;
-            DestroyImmediate(similarHexagons[0].gameObject);
             similarHexagons.RemoveAt(0);
         }
 
+        updatedGridCells.Add(gridCell);
+
         yield return new WaitForSeconds(.2f + (similarHexagonCount + 1f) * .01f);
+        onStackCompleted?.Invoke(collectedHexagons);
     }
 }
