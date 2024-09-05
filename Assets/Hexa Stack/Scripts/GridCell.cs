@@ -8,6 +8,9 @@ public class GridCell : MonoBehaviour
 
     [OnValueChanged("GenerateInitialHexagons")]
     [SerializeField] private Color[] hexagonColors;
+    [SerializeField] private Material[] gridMaterials;
+    [SerializeField] private MeshRenderer meshRenderer;
+
     public HexStack Stack { get; private set; }
     public bool IsOccupied {  
         get => Stack != null;
@@ -46,5 +49,14 @@ public class GridCell : MonoBehaviour
 
             Stack.Add(hexagonInstance);
         }
+    }
+    public void ChangeColor(bool selected)
+    {
+        if (selected)
+        {
+            meshRenderer.material = gridMaterials[1];
+        }
+        else
+            meshRenderer.material = gridMaterials[0];
     }
 }

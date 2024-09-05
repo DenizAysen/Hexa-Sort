@@ -16,34 +16,54 @@ public class Tower : MonoBehaviour
     #region Privates
     private float _fillIncrement;
     private int _fillCount;
-
+    private int _startFillCount;
     private float _fillPercent;
 
     private Renderer _renderer;
 
     #endregion
+    public static Action<float> onFillIncreased;
     private void Awake()
     {
         _renderer = GetComponent<Renderer>();
         _fillIncrement = 1 / buildingData.Health;
-        _fillCount = PlayerPrefs.GetInt("Hexagon");
-
+        _startFillCount = PlayerPrefs.GetInt("Hexagon");
+        _fillCount = _startFillCount;
         _fillPercent = PlayerPrefs.GetFloat("Percentage");
+        if (_fillPercent >= 1f)
+            _fillPercent = 0f;
     }
+    private void OnEnable()
+    {
+        FillButton.onFilling += OnFilling;
+    }
+
+    private void OnFilling()
+    {
+        Fill();
+    }
+    private void OnDisable()
+    {
+        FillButton.onFilling -= OnFilling;
+    }
+
     void Start()
     {
         UpdateMaterials();
     }
 
-    // Update is called once per frame
-    void Update()
+    //// Update is called once per frame
+    //void Update()
+    //{
+    //    //if(Input.GetMouseButton(0))
+    //    //{
+    //    //    Fill();
+    //    //}
+    //}
+    public void ButonaBasti()
     {
-        if(Input.GetMouseButton(0))
-        {
-            Fill();
-        }
+        Debug.Log("Basti");
     }
-
     private void Fill()
     {
         if (_fillPercent >= 1)
@@ -60,6 +80,9 @@ public class Tower : MonoBehaviour
 
             _animator.Play("Bump");
             _fillCount--;
+            float _fillButtonFillAmount = _fillCount/(float)_startFillCount;
+            Debug.Log(_fillButtonFillAmount);
+            onFillIncreased?.Invoke(_fillButtonFillAmount);
         }
         else
         {

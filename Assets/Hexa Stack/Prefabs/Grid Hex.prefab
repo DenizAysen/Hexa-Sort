@@ -71,6 +71,10 @@ MonoBehaviour:
   hexagonPrefab: {fileID: 446214033323251562, guid: 2ae6309f43d7dc745818478dc5644902,
     type: 3}
   hexagonColors: []
+  gridMaterials:
+  - {fileID: 2100000, guid: fffe83222ac82e642b2d376f71cf83af, type: 2}
+  - {fileID: 2100000, guid: 796c3aac3d2653249b9d7d70da530a89, type: 2}
+  meshRenderer: {fileID: 662034308630855805}
 --- !u!1 &8941433559346172788
 GameObject:
   m_ObjectHideFlags: 0

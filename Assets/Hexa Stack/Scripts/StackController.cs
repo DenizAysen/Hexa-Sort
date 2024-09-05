@@ -12,7 +12,7 @@ public class StackController : MonoBehaviour
     [SerializeField] private LayerMask groundLayerMask;
 
     private HexStack currentStack;
-    private GridCell targetCell;
+    private GridCell previousSelectedCell,targetCell;
 
     private Vector3 currentStackInitialPos;
 
@@ -78,7 +78,9 @@ public class StackController : MonoBehaviour
         targetCell.AssignStack(currentStack);
         onStackPlaced?.Invoke(targetCell);
 
+        targetCell.ChangeColor(false);
         targetCell = null;
+        previousSelectedCell = null;
         currentStack = null;
     }
 
@@ -115,7 +117,17 @@ public class StackController : MonoBehaviour
             currentStackTargetPos,
             Time.deltaTime * 30f);
 
+        if(previousSelectedCell != null && previousSelectedCell != gridCell)
+        {
+            previousSelectedCell.ChangeColor(false);
+            previousSelectedCell = targetCell;
+        }
+        else
+            previousSelectedCell = gridCell;
+
         targetCell = gridCell;
+
+        targetCell.ChangeColor(true);
     }
 
     private void DraggingAboveGround()
@@ -134,7 +146,11 @@ public class StackController : MonoBehaviour
             currentStackTargetPos, 
             Time.deltaTime * 30f);
 
+        if(targetCell != null)
+            targetCell.ChangeColor(false);
+
         targetCell = null;
+        previousSelectedCell = null;
     }
 
    
